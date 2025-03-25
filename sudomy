@@ -1351,7 +1351,7 @@ if [[ $DESTINATION == true ]]; then
   [[ ! -e "${OUTFILE}/${OUT_NAME}" ]] &&
     mkdir -p "${OUTFILE}/${OUT_NAME}" || true
   cp -r ${OUT}/${DATE_LOG}/${DOMAIN} ${OUTFILE}/${OUT_NAME}/
-  rm -r ${OUT}/${DATE_LOG}/
+  #rm -r ${OUT}/${DATE_LOG}/  Rimuove file salvati?
 
   echo -e "${BOLD}${PADDING}${PADDING}\t-${RESET}${BOLD}${RESET}${LGREEN} ${OUTFILE}/${OUT_NAME}/${DOMAIN} ${RESET} "
   echo -e "${BOLD}${PADDING}${PADDING}\t-${RESET}${BOLD}${RESET}${LGREEN} ${OUTFILE}/${OUT_NAME}/${DOMAIN}/report ${RESET} "
