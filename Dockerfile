@@ -18,30 +18,32 @@ RUN apt update \
 	grep \
     bsdmainutils \
     # Install NodeJS 10.x
-    && curl -sL https://deb.nodesource.com/setup_14.x -o setup.sh \
-    && bash setup.sh \
-    && apt install -y nodejs \
+    && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
+    && curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install apt-utils \
+    && apt-get install -y nodejs \
+    && apt-get install -y npm \
     # Install PhantomJS
     && curl -k -Ls https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64.tar.bz2 | tar -jxvf - -C / && \
     cp phantomjs-${PHANTOMJS_VERSION}-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs \
     && rm -fR phantomjs-${PHANTOMJS_VERSION}-linux-x86_64 \
-    && rm -rf /var/lib/apt/lists/* \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | tee /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update \
     && apt-get install google-chrome-stable -y \
-    && pip3 install --upgrade setuptools wheel
+    && pip3 install --upgrade setuptools wheel --break-system-packages
 
 WORKDIR /app
 COPY requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt --break-system-packages
 
 FROM builder
 ENV PATH "$PATH:/usr/lib/sudomy/lib/bin"
 ENV SHODAN_API="" CENSYS_API="" CENSYS_SECRET="" VIRUSTOTAL="" BINARYEDGE="" SECURITY_TRAILS="" DNSDB_API="" PASSIVE_API="" SPYSE_API="" FACEBOOK_TOKEN="" YOUR_WEBHOOK_URL=""
-RUN npm config set unsafe-perm true \
+#RUN npm config set --unsafe-perm=true \
     # Install wappalyzer & wscat
-    && npm i -g wappalyzer wscat
+#    && npm i -g wappalyzer wscat
+
+RUN npm install --unsafe-perm=true -g wappalyzer wscat
 
 ADD . /usr/lib/sudomy
 WORKDIR /usr/lib/sudomy
